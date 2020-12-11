@@ -53,17 +53,17 @@ func _init(new_path:String="",new_relative_path:String=""):
 		relative_path=_fix(new_path)
 
 func _get_relative_path(path:String)->String:
-	var path_dir = Global.app_path.get_base_dir()+"/"
+	var path_dir = _get_app_folder()+"/"
 	if path_dir in path:
 		return path.replace(path_dir, "")
 	return ""
 
 func _get_absolute_from_relative(path:String)->String:
-	return Global.app_path.get_base_dir()+"/"+path
+	return _get_app_folder()+"/"+path
 
 func _fix(path:String)->String:
 	var directory = Directory.new();
-	if path!="" and directory.file_exists(path if path.is_abs_path() else "res://"+path):
+	if path!="" and directory.file_exists(path):
 		return path
 	else:
 		return ""
@@ -74,3 +74,6 @@ func _resync():
 	if absolute_path!="" and relative_path!="":
 		if absolute_path != _get_absolute_from_relative(relative_path):
 			absolute_path=""
+
+func _get_app_folder()->String:
+	return OS.get_executable_path().get_base_dir() if OS.has_feature("standalone") else ProjectSettings.globalize_path("res://").get_base_dir()
